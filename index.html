@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEL1T4E_HASH - Browser Based</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; }
+        .cyber-card { background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-black text-white tracking-tighter italic uppercase">KEL1T4E<span class="text-emerald-400 text-3xl">_STATIC</span></h1>
+            <p class="text-slate-500 text-[10px] tracking-[0.5em] uppercase mt-2">No-Server Security System</p>
+        </header>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+            <div class="cyber-card p-8 rounded-[2rem] shadow-2xl">
+                <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="cpu" class="mr-2 w-4 h-4"></i> Encryption Engine</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Input Data</label>
+                        <input type="text" id="inputText" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none focus:border-emerald-500 text-sm" placeholder="Type text here...">
+                    </div>
+                    <button onclick="generateHash()" class="w-full bg-emerald-500 text-slate-950 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-emerald-400 transition-all">Generate SHA-256</button>
+                    
+                    <div id="resultBox" class="hidden mt-8 p-5 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
+                        <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-2">Result Hash</span>
+                        <code id="hashOutput" class="block text-[10px] text-emerald-400 break-all font-mono bg-slate-950/50 p-3 rounded-xl border border-slate-800"></code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cyber-card p-8 rounded-[2rem] shadow-2xl">
+                <h2 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="shield-check" class="mr-2 w-4 h-4"></i> Integrity Validator</h2>
+                <div class="space-y-4">
+                    <input type="text" id="verifyHash" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-[10px] font-mono" placeholder="Paste hash to check...">
+                    <input type="text" id="verifyText" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-sm" placeholder="Original text...">
+                    <button onclick="verifyHashFunc()" class="w-full border-2 border-blue-500/30 text-blue-400 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-blue-500/10 transition-all">Check Integrity</button>
+                    <div id="vResult" class="hidden mt-6 p-5 rounded-2xl border-2 font-black text-xs uppercase tracking-widest"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Fungsi Hashing SHA-256 menggunakan Web Crypto API (Bawaan Browser)
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function generateHash() {
+            const text = document.getElementById('inputText').value;
+            if(!text) return alert("Isi teks dulu!");
+            const hash = await sha256(text);
+            document.getElementById('hashOutput').innerText = hash;
+            document.getElementById('resultBox').classList.remove('hidden');
+        }
+
+        async function verifyHashFunc() {
+            const hInput = document.getElementById('verifyHash').value.trim();
+            const tInput = document.getElementById('verifyText').value.trim();
+            const resBox = document.getElementById('vResult');
+            
+            const hashed = await sha256(tInput);
+            resBox.classList.remove('hidden');
+            
+            if(hashed === hInput.toLowerCase()) {
+                resBox.innerText = "RESULT: MATCH";
+                resBox.className = "mt-6 p-5 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-black text-xs uppercase tracking-widest";
+            } else {
+                resBox.innerText = "RESULT: NOT MATCH";
+                resBox.className = "mt-6 p-5 rounded-2xl border-2 border-red-500/30 bg-red-500/10 text-red-400 font-black text-xs uppercase tracking-widest";
+            }
+        }
+    </script>
+</body>
+</html>
