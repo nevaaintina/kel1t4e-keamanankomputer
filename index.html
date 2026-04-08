@@ -3,32 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-SHIELD PRO X - Security Analyzer</title>
+    <title>K-SHIELD FORENSIC - Integrity System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; }
+        body { background-color: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; overflow-x: hidden; }
         .cyber-card { background: rgba(15, 23, 42, 0.8); border: 1px solid #1e293b; backdrop-filter: blur(12px); }
-        input[type=range] { accent-color: #10b981; }
-        .strength-bar { height: 4px; border-radius: 2px; transition: all 0.3s ease; }
         .tab-active { color: #10b981; border-bottom: 2px solid #10b981; }
+        .strength-bar { height: 4px; border-radius: 2px; transition: all 0.3s ease; }
+        
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 999; pointer-events: none; background-size: 100% 2px, 3px 100%;
+        }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+        .scanning::after { content: "..."; animation: blink 1s infinite; }
     </style>
 </head>
 <body class="p-4 md:p-10">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto relative z-10">
         <header class="text-center mb-6">
-            <h1 class="text-4xl font-black text-white tracking-tighter italic uppercase">K-SHIELD<span class="text-emerald-400 text-3xl">_PRO_X</span></h1>
-            <p class="text-slate-500 text-[10px] tracking-[0.5em] uppercase mt-2">Advanced Cryptographic & Integrity Shield</p>
+            <div class="inline-block bg-emerald-500/10 border border-emerald-500/20 px-4 py-1 rounded-full mb-4">
+                <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-[0.3em]">Hardware ID: K1-T4E-001</span>
+            </div>
+            <h1 class="text-4xl font-black text-white tracking-tighter italic uppercase">K-SHIELD<span class="text-emerald-400 text-3xl">_FORENSIC</span></h1>
+            <p class="text-slate-500 text-[10px] tracking-[0.5em] uppercase mt-2 font-mono text-center">Data Integrity & Bitwise Transformation Module</p>
         </header>
 
         <div class="flex justify-center space-x-8 mb-10 border-b border-slate-800">
-            <button onclick="switchTab('main')" id="btn-main" class="pb-2 text-xs font-bold uppercase tracking-widest tab-active">System Engine</button>
+            <button onclick="switchTab('main')" id="btn-main" class="pb-2 text-xs font-bold uppercase tracking-widest tab-active">Security Engine</button>
             <button onclick="switchTab('about')" id="btn-about" class="pb-2 text-xs font-bold uppercase tracking-widest text-slate-500">Education Page</button>
         </div>
 
-        <div id="tab-main" class="grid lg:grid-cols-2 gap-8">
+        <div id="tab-main" class="grid lg:grid-cols-2 gap-8 animate-in fade-in duration-700">
             <div class="cyber-card p-8 rounded-[2rem] shadow-2xl relative">
-                <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="zap" class="mr-2 w-4 h-4"></i> Encryption Engine</h2>
+                <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="shield" class="mr-2 w-4 h-4"></i> Data Encryption</h2>
                 <div class="space-y-6">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -40,13 +51,14 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Rounds: <span id="rVal" class="text-emerald-400">10</span></label>
-                            <input type="range" id="roundsInput" min="1" max="100" value="10" class="w-full mt-3" oninput="document.getElementById('rVal').innerText = this.value">
+                            <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">Rounds: <span id="rVal" class="text-emerald-400 font-bold">10</span></label>
+                            <input type="range" id="roundsInput" min="1" max="100" value="10" class="w-full mt-3 cursor-pointer" oninput="document.getElementById('rVal').innerText = this.value">
                         </div>
                     </div>
+
                     <div class="space-y-3">
-                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Input Data</label>
-                        <input type="text" id="inputText" oninput="updateStrength(this.value)" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none text-sm" placeholder="Enter sensitive data...">
+                        <label class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Input String</label>
+                        <input type="text" id="inputText" oninput="updateStrength(this.value)" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl outline-none focus:border-emerald-500 text-sm" placeholder="Paste sensitive data here...">
                         <div class="flex gap-1">
                             <div id="s1" class="strength-bar w-1/4 bg-slate-800"></div>
                             <div id="s2" class="strength-bar w-1/4 bg-slate-800"></div>
@@ -55,11 +67,16 @@
                         </div>
                         <p id="strengthText" class="text-[9px] font-bold text-slate-600 uppercase">Strength: None</p>
                     </div>
-                    <button onclick="generateHash()" class="w-full bg-emerald-500 text-slate-950 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-emerald-400 transition-all">Generate Secure Hash</button>
-                    <div id="resultBox" class="hidden mt-8 p-5 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl animate-in fade-in duration-500">
+
+                    <button onclick="generateHash()" class="w-full bg-emerald-500 text-slate-950 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-emerald-400 transition-all active:scale-95">Generate Digital Sign</button>
+
+                    <div id="resultBox" class="hidden mt-8 p-5 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Hash Output</span>
-                            <button onclick="transferMetadata()" class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg text-[9px] font-bold hover:bg-emerald-500 transition-all">SYNC TO VALIDATOR</button>
+                            <span class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Hash Result</span>
+                            <div class="flex gap-2">
+                                <button onclick="downloadReport()" title="Download" class="bg-slate-800 text-emerald-400 p-2 rounded-lg hover:bg-emerald-500 transition"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="transferMetadata()" class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-lg text-[9px] font-bold hover:bg-emerald-500 transition">SYNC VALIDATOR</button>
+                            </div>
                         </div>
                         <code id="hashOutput" class="block text-[10px] text-emerald-400/90 break-all font-mono bg-slate-950/50 p-3 rounded-xl border border-slate-800"></code>
                     </div>
@@ -67,62 +84,80 @@
             </div>
 
             <div class="cyber-card p-8 rounded-[2rem] shadow-2xl">
-                <h2 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="shield-check" class="mr-2 w-4 h-4"></i> Integrity Validator</h2>
+                <h2 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-8 flex items-center"><i data-lucide="check-circle" class="mr-2 w-4 h-4"></i> Integrity Check</h2>
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-[10px]">
-                            <span class="text-slate-500 font-bold uppercase">Algo:</span>
-                            <span id="vAlgoDisplay" class="font-bold text-blue-400">SHA-256</span>
+                            <span class="text-slate-500 font-bold uppercase tracking-widest">Mode:</span>
+                            <span id="vAlgoDisplay" class="font-bold text-blue-400 italic">SHA-256</span>
                         </div>
                         <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-[10px]">
-                            <span class="text-slate-500 font-bold uppercase">Rounds:</span>
+                            <span class="text-slate-500 font-bold uppercase tracking-widest">Rounds:</span>
                             <span id="vRDisplay" class="font-bold text-blue-400">10</span>
                         </div>
                     </div>
-                    <input type="text" id="vHashInput" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-[10px] font-mono text-slate-400 outline-none" placeholder="Target Hash...">
-                    <input type="text" id="vTextInput" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-sm" placeholder="Confirm original data...">
-                    <input type="hidden" id="vSaltHidden">
-                    <input type="hidden" id="vAlgoHidden" value="SHA-256">
-                    <input type="hidden" id="vRoundsHidden" value="10">
-                    <button onclick="verifyHash()" class="w-full border-2 border-blue-500/30 text-blue-400 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-blue-500/10 transition-all">Validate Integrity</button>
+                    <input type="text" id="vHashInput" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl text-[10px] font-mono text-slate-400 outline-none" placeholder="Paste target hash here...">
+                    <input type="text" id="vTextInput" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-sm" placeholder="Re-enter data for verification...">
+                    <input type="hidden" id="vSaltHidden"><input type="hidden" id="vAlgoHidden" value="SHA-256"><input type="hidden" id="vRoundsHidden" value="10">
+                    <button onclick="verifyHash()" class="w-full border-2 border-blue-500/30 text-blue-400 font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] hover:bg-blue-500/10 transition-all active:scale-95">Verify Integrity</button>
                     <div id="vResult" class="hidden mt-6 p-5 rounded-2xl border-2 flex items-center">
-                        <i id="vIcon" data-lucide="shield" class="mr-4 w-6 h-6"></i>
+                        <i id="vIcon" data-lucide="info" class="mr-4 w-6 h-6"></i>
                         <p id="vText" class="font-black text-xs tracking-widest uppercase"></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="tab-about" class="hidden max-w-4xl mx-auto space-y-6">
+        <div id="tab-about" class="hidden max-w-4xl mx-auto space-y-8 animate-in slide-in-from-bottom duration-500">
             <div class="cyber-card p-8 rounded-[2rem] border-emerald-500/20">
-                <h2 class="text-xl font-bold text-emerald-400 mb-4">Apa itu Hashing?</h2>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">
-                    Hashing adalah proses mengubah data menjadi sidik jari digital (Digital Fingerprint) unik. Berbeda dengan enkripsi, hashing bersifat <strong>satu arah (one-way)</strong>, artinya data yang sudah menjadi hash tidak bisa dikembalikan lagi ke bentuk aslinya.
-                </p>
-                <div class="grid md:grid-cols-3 gap-4 text-center">
-                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                        <i data-lucide="fingerprint" class="mx-auto mb-2 text-emerald-500"></i>
-                        <h3 class="text-[10px] font-bold uppercase text-slate-300">Unik</h3>
+                <h2 class="text-xl font-bold text-emerald-400 mb-4 italic">Memahami Integritas Data</h2>
+                <p class="text-slate-400 text-sm leading-relaxed mb-6">Integritas data adalah jaminan bahwa data tetap akurat dan tidak berubah selama penyimpanan atau pengiriman. K-SHIELD menggunakan algoritma <strong>SHA (Secure Hash Algorithm)</strong> untuk menciptakan identitas unik bagi setiap data.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-slate-900/50 rounded-2xl border border-slate-800">
+                        <h3 class="text-emerald-400 font-bold text-xs uppercase mb-3 tracking-widest flex items-center"><i data-lucide="zap" class="mr-2 w-3 h-3"></i> Mengapa Pakai Salt?</h3>
+                        <p class="text-slate-500 text-[11px] leading-relaxed">Tanpa <strong>Salt</strong>, kata sandi yang sama akan menghasilkan hash yang sama. Peretas bisa menggunakan daftar hash yang sudah ada (Rainbow Tables) untuk menebak data Anda. Salt menambahkan data acak unik sehingga hash selalu berbeda.</p>
                     </div>
-                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                        <i data-lucide="arrow-right-circle" class="mx-auto mb-2 text-emerald-500"></i>
-                        <h3 class="text-[10px] font-bold uppercase text-slate-300">Satu Arah</h3>
-                    </div>
-                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
-                        <i data-lucide="lock" class="mx-auto mb-2 text-emerald-500"></i>
-                        <h3 class="text-[10px] font-bold uppercase text-slate-300">Integritas</h3>
+                    <div class="p-5 bg-slate-900/50 rounded-2xl border border-slate-800">
+                        <h3 class="text-emerald-400 font-bold text-xs uppercase mb-3 tracking-widest flex items-center"><i data-lucide="repeat" class="mr-2 w-3 h-3"></i> Mengapa Pakai Rounds?</h3>
+                        <p class="text-slate-500 text-[11px] leading-relaxed"><strong>Key Stretching</strong> (Rounds) memaksa komputer untuk melakukan hash berulang kali. Ini memperlambat serangan <em>Brute Force</em>. Jika 1 round butuh 0.01ms, maka 100 rounds butuh 1ms—terlihat kecil, tapi bagi peretas ini adalah hambatan besar.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="cyber-card p-6 rounded-[2rem]">
-                    <h3 class="text-emerald-400 font-bold mb-2 flex items-center"><i data-lucide="database" class="mr-2 w-4 h-4"></i> Stealth Salt</h3>
-                    <p class="text-slate-400 text-xs leading-relaxed">Sistem ini menggunakan <strong>Salt</strong> (data acak tambahan) yang digabungkan ke input user. Salt ini bersifat rahasia (hidden) untuk mencegah peretas menggunakan daftar kata sandi yang sudah umum (Rainbow Tables).</p>
-                </div>
-                <div class="cyber-card p-6 rounded-[2rem]">
-                    <h3 class="text-emerald-400 font-bold mb-2 flex items-center"><i data-lucide="repeat" class="mr-2 w-4 h-4"></i> Custom Rounds</h3>
-                    <p class="text-slate-400 text-xs leading-relaxed">Dikenal sebagai <strong>Key Stretching</strong>. Dengan melakukan hash berulang kali (rounds), kita memaksa komputer peretas bekerja jauh lebih berat, sehingga serangan Brute Force menjadi tidak efektif.</p>
+            <div class="cyber-card p-8 rounded-[2rem] border-blue-500/20">
+                <h3 class="text-blue-400 font-bold mb-6 text-center uppercase tracking-widest text-sm">Algoritma Comparison</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-[11px]">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-500 uppercase">
+                                <th class="pb-3 px-2">Algorithm</th>
+                                <th class="pb-3 px-2">Hash Length (Bits)</th>
+                                <th class="pb-3 px-2">Security Level</th>
+                                <th class="pb-3 px-2">Use Case</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-400">
+                            <tr class="border-b border-slate-900">
+                                <td class="py-3 px-2 font-mono">SHA-256</td>
+                                <td class="py-3 px-2">256-bit</td>
+                                <td class="py-3 px-2 text-emerald-500 font-bold">High</td>
+                                <td class="py-3 px-2 italic">Standard Security, Blockchain</td>
+                            </tr>
+                            <tr class="border-b border-slate-900">
+                                <td class="py-3 px-2 font-mono">SHA-384</td>
+                                <td class="py-3 px-2">384-bit</td>
+                                <td class="py-3 px-2 text-blue-400 font-bold">Very High</td>
+                                <td class="py-3 px-2 italic">Federal Standard, Top Secret</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-2 font-mono">SHA-512</td>
+                                <td class="py-3 px-2">512-bit</td>
+                                <td class="py-3 px-2 text-purple-400 font-bold">Ultra</td>
+                                <td class="py-3 px-2 italic">High-Security Data Centers</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -130,89 +165,114 @@
 
     <script>
         lucide.createIcons();
-        let currentMetadata = { salt: '', algo: '', rounds: 10 };
+        let currentMetadata = { salt: '', algo: '', rounds: 10, text: '' };
 
-        // Tab Switching Logic
         function switchTab(tab) {
-            const main = document.getElementById('tab-main');
-            const about = document.getElementById('tab-about');
-            const btnMain = document.getElementById('btn-main');
-            const btnAbout = document.getElementById('btn-about');
-
-            if(tab === 'main') {
-                main.classList.remove('hidden');
-                main.classList.add('grid');
-                about.classList.add('hidden');
-                btnMain.className = "pb-2 text-xs font-bold uppercase tracking-widest tab-active";
-                btnAbout.className = "pb-2 text-xs font-bold uppercase tracking-widest text-slate-500";
-            } else {
-                main.classList.remove('grid');
-                main.classList.add('hidden');
-                about.classList.remove('hidden');
-                btnAbout.className = "pb-2 text-xs font-bold uppercase tracking-widest tab-active";
-                btnMain.className = "pb-2 text-xs font-bold uppercase tracking-widest text-slate-500";
-            }
+            document.getElementById('tab-main').classList.toggle('hidden', tab !== 'main');
+            document.getElementById('tab-main').classList.toggle('grid', tab === 'main');
+            document.getElementById('tab-about').classList.toggle('hidden', tab !== 'about');
+            document.getElementById('btn-main').classList.toggle('tab-active', tab === 'main');
+            document.getElementById('btn-about').classList.toggle('tab-active', tab === 'about');
         }
 
-        // Logic Strength Meter, Hash, Verify tetap sama seperti sebelumnya...
         function updateStrength(val) {
             const bars = [document.getElementById('s1'), document.getElementById('s2'), document.getElementById('s3'), document.getElementById('s4')];
-            const text = document.getElementById('strengthText');
             let score = 0;
             if (val.length > 6) score++;
             if (val.length > 10 && /[0-9]/.test(val)) score++;
             if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
             if (/[^A-Za-z0-9]/.test(val)) score++;
+            const labels = ['Weak', 'Fair', 'Strong', 'Secure'];
             const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-500'];
-            const labels = ['Weak', 'Fair', 'Strong', 'Unbreakable'];
             bars.forEach((bar, i) => bar.className = 'strength-bar w-1/4 ' + (i < score ? colors[score-1] : 'bg-slate-800'));
-            text.innerText = val ? `Strength: ${labels[score-1] || 'Weak'}` : 'Strength: None';
-        }
-
-        async function hashWithRounds(password, salt, algo, rounds) {
-            let current = new TextEncoder().encode(salt + password);
-            for (let i = 0; i < rounds; i++) {
-                const hashBuffer = await crypto.subtle.digest(algo, current);
-                if (i === rounds - 1) return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-                current = new Uint8Array(hashBuffer);
-            }
+            document.getElementById('strengthText').innerText = val ? `Strength: ${labels[score-1] || 'Weak'}` : 'Strength: None';
         }
 
         async function generateHash() {
-            const text = document.getElementById('inputText').value;
+            const inputEl = document.getElementById('inputText');
+            const text = inputEl.value;
             const algo = document.getElementById('algoSelect').value;
             const rounds = parseInt(document.getElementById('roundsInput').value);
-            if(!text) return alert("Fill input first!");
-            const salt = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('');
-            const hash = await hashWithRounds(text, salt, algo, rounds);
-            currentMetadata = { salt, algo, rounds };
-            document.getElementById('hashOutput').innerText = hash;
-            document.getElementById('resultBox').classList.remove('hidden');
+            const output = document.getElementById('hashOutput');
+            const box = document.getElementById('resultBox');
+
+            if(!text) return alert("Input required!");
+
+            box.classList.remove('hidden');
+            output.innerText = "Analyzing Bitstream & Ingesting Salt";
+            output.classList.add('scanning');
+
+            // 1. CLEAR INPUT AUTOMATICALLY
+            inputEl.value = ""; 
+            updateStrength(""); // Reset strength meter
+
+            setTimeout(async () => {
+                const salt = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2, '0')).join('');
+                let current = new TextEncoder().encode(salt + text);
+                for (let i = 0; i < rounds; i++) {
+                    const hashBuf = await crypto.subtle.digest(algo, current);
+                    if (i === rounds - 1) {
+                        const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+                        output.classList.remove('scanning');
+                        output.innerText = hash;
+                        currentMetadata = { salt, algo, rounds, hash, text };
+                        break;
+                    }
+                    current = new Uint8Array(hashBuf);
+                }
+            }, 800);
         }
 
         function transferMetadata() {
-            document.getElementById('vHashInput').value = document.getElementById('hashOutput').innerText;
+            document.getElementById('vHashInput').value = currentMetadata.hash;
             document.getElementById('vSaltHidden').value = currentMetadata.salt;
             document.getElementById('vAlgoHidden').value = currentMetadata.algo;
             document.getElementById('vRoundsHidden').value = currentMetadata.rounds;
             document.getElementById('vAlgoDisplay').innerText = currentMetadata.algo;
             document.getElementById('vRDisplay').innerText = currentMetadata.rounds;
-            alert("Metadata Synced!");
+            alert("Digital Sign Transferred to Integrity Check!");
+        }
+
+        function downloadReport() {
+            const report = `--- K-SHIELD FORENSIC REPORT ---\n` +
+                           `Timestamp: ${new Date().toLocaleString()}\n` +
+                           `Algorithm: ${currentMetadata.algo}\n` +
+                           `Rounds: ${currentMetadata.rounds}\n` +
+                           `Data Integrity Status: VERIFIED\n` +
+                           `-------------------------------\n` +
+                           `Final Hash: ${currentMetadata.hash}\n` +
+                           `Salt ID: ${currentMetadata.salt}`;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Forensic_Report_${currentMetadata.algo}.txt`;
+            a.click();
         }
 
         async function verifyHash() {
-            const hInput = document.getElementById('vHashInput').value.trim();
-            const tInput = document.getElementById('vTextInput').value.trim();
+            const hIn = document.getElementById('vHashInput').value.trim();
+            const tIn = document.getElementById('vTextInput').value.trim();
             const salt = document.getElementById('vSaltHidden').value;
             const algo = document.getElementById('vAlgoHidden').value;
             const rounds = parseInt(document.getElementById('vRoundsHidden').value);
-            if(!salt) return alert("Sync data first!");
-            const hashed = await hashWithRounds(tInput, salt, algo, rounds);
-            const resBox = document.getElementById('vResult');
-            const isMatch = (hashed === hInput.toLowerCase());
-            resBox.classList.remove('hidden');
-            document.getElementById('vText').innerText = isMatch ? "INTEGRITY SECURE" : "INTEGRITY BREACHED";
-            resBox.className = `mt-6 p-5 rounded-2xl border-2 flex items-center ${isMatch ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-red-500/30 bg-red-500/10 text-red-400'}`;
+            
+            if(!salt) return alert("Please Sync Metadata First!");
+
+            let current = new TextEncoder().encode(salt + tIn);
+            for (let i = 0; i < rounds; i++) {
+                const hashBuf = await crypto.subtle.digest(algo, current);
+                if (i === rounds - 1) {
+                    const hashed = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+                    const isMatch = (hashed === hIn.toLowerCase());
+                    const resBox = document.getElementById('vResult');
+                    resBox.classList.remove('hidden');
+                    document.getElementById('vText').innerText = isMatch ? "RESULT: INTEGRITY MATCH" : "RESULT: DATA ALTERED";
+                    resBox.className = `mt-6 p-5 rounded-2xl border-2 flex items-center ${isMatch ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-red-500/30 bg-red-500/10 text-red-400'}`;
+                    break;
+                }
+                current = new Uint8Array(hashBuf);
+            }
         }
     </script>
 </body>
